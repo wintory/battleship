@@ -15,7 +15,7 @@ app.use(bodyParser.json())
 
 // Index route
 app.get('/', function (req, res) {
-	res.send({"name","hello world"})
+	res.send({"name":"hello world"})
 })
 
 app.get('/hi',function (req,res){
