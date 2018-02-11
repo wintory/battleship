@@ -1,4 +1,4 @@
-const server = require('../index')
+const server = require('../server')
 var db;
 var mongo = require('./databaseManager')
 var shipName = ['Battleship','Cruisers','Cruiser','Destroyer','Destroyer','Destroyer','submarine','submarine','submarine','submarine']
