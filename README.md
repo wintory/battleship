@@ -1,39 +1,47 @@
-# node-js-getting-started
+# Simple battleship api
+  a simple backend for battleship game. a ship has 4 type with total of 10 ship.
+  This is a single player game. A ship will generate from server-side and you will play as Attacker by guessing a cell on the   map.
+  
+  A map contain 10x10 square grid. each grid has a unique coordinate. (x[1:10],y[1:10])
+  
+  ![Screenshot](https://i.imgur.com/JENwwDl.png)
+  
+# Type of ship
+  
+  1x Battleship
+  2x cruisers
+  3x Destroyers
+  4x submarines
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
-
-This application supports the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
 
 ## Running Locally
-
-Make sure you have [Node.js](http://nodejs.org/) and the [Heroku CLI](https://cli.heroku.com/) installed.
-
 ```sh
-$ git clone git@github.com:heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
+$ git clone https://github.com/numchiew/battleship.git
+$ cd battleship
 $ npm install
-$ npm start
+$ node server.js
 ```
 
 Your app should now be running on [localhost:5000](http://localhost:5000/).
 
-## Deploying to Heroku
+# API
 
-```
-$ heroku create
-$ git push heroku master
-$ heroku open
-```
-or
+## GET /newgame 
+Generate a new game and close lastest game.
+## GET /play/:username 
+Continue play a current game. if the game was close it will create a new game instead.
+## GET /shoot/:coordinates 
+Firing a missile on the map. [x,y]
+example. /shoot/2,3
+## GET /history/:username
+Get a history match of this user. 
+## GET /highestscore/:username
+return a highest score match of user.
+## GET /leaderboard
+return top 10 match that contain a highest score in server.
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+# Test
+   1. for test all api. run mocha in directory.
+   2. for simulate the game from start to end. run node simulate.js
 
-## Documentation
 
-For more information about using Node.js on Heroku, see these Dev Center articles:
-
-- [Getting Started with Node.js on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs)
-- [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
-- [Node.js on Heroku](https://devcenter.heroku.com/categories/nodejs)
-- [Best Practices for Node.js Development](https://devcenter.heroku.com/articles/node-best-practices)
-- [Using WebSockets on Heroku with Node.js](https://devcenter.heroku.com/articles/node-websockets)
