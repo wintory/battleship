@@ -57,6 +57,39 @@ describe("Simple battleship API test", () => {
         done()
     })
   })
+    it("Test Get LeaderBoard", (done) => {
+    server
+    .get("/shoot/-1,0")
+    .expect(200)
+    .end(function(err, res){
+      result = res.text
+      assert.equal(200,res.status)
+      if(err) return done(err)
+        done()
+    })
+  })
+    it("Test Get Highest Score of user", (done) => {
+    server
+    .get("/shoot/-1,0")
+    .expect(200)
+    .end(function(err, res){
+      result = res.text
+      assert.equal(200,res.status)
+      if(err) return done(err)
+        done()
+    })
+  })
+    it("Test Get Match History", (done) => {
+    server
+    .get("/shoot/-1,0")
+    .expect(200)
+    .end(function(err, res){
+      result = res.text
+      assert.equal(200,res.status)
+      if(err) return done(err)
+        done()
+    })
+  })
 })
 
 

@@ -99,7 +99,8 @@ class mongoDB{
 	    			game_status : false,
 	    			action : [],
 	    			ship_destroyed : 0,
-	    			missed_shot : 0
+	    			missed_shot : 0,
+                    score : 0
 	    		}
 	    		this.db.collection("Game_Host").insertOne(game_data, (err,res) => {
     			if(err) { reject(err); return;}
@@ -240,13 +241,15 @@ class mongoDB{
     	}))
     }
     // direction 1 = vertical , 0 = horizontal
+    // vertical > place up, place down
+    // horizontal > place right, place left
     checkAdjacent(x,y,type,direction, mapData){
     	let freespace = 0;
     	if(type == 4){
     		return true
     	}
     	if(direction){
-    		if((y + type) <= 9){
+    		if((y + type) <= 9){ //place up
     			for(let i = -1;i<2;i++){
     				// if(i == -1 || i == 1){
     					for(let k = -1;k <= type;k++){
@@ -256,7 +259,7 @@ class mongoDB{
     					}
     				}
     		}else{
-    			for(let i = -1;i<2;i++){
+    			for(let i = -1;i<2;i++){ //place down
     				// if(i == -1 || i == 1){
     					for(let k = -type;k <= 1;k++){
     						if((x+i > 0) && (x+i < 10) &&mapData[x+i][y+k] != undefined){
@@ -266,7 +269,7 @@ class mongoDB{
     			 }
     		}
     	}else{
-    		if((x + type) <= 9){
+    		if((x + type) <= 9){ //place right
     			for(let i = -1;i<2;i++){
     				// if(i == -1 || i == 1){
     					for(let k = -1;k <= type;k++){
@@ -276,7 +279,7 @@ class mongoDB{
     					}
     			}
     		}else{
-    			for(let i = -1;i<2;i++){
+    			for(let i = -1;i<2;i++){ //place left
     				// if(i == -1 || i == 1){
     					for(let k = -type;k <= 1;k++){
     						if((x+k > 0) && (x+k < 10) &&mapData[x+k][y+i] != undefined){
@@ -286,7 +289,7 @@ class mongoDB{
     			}
     		}
     	}
-    	if(freespace){
+    	if(freespace){ // freespace > 0 = has ship around this position. 
     		return false
     	}else{
     		return true
@@ -315,14 +318,39 @@ class mongoDB{
 		})
 	}
 
-	async updateGameStatus(game_id){
+	async updateGameStatus(game_id, score){
 		return new Promise((resolve, reject) => {
-			this.db.collection("Game_Host").update({game_id : game_id}, { $set: {"game_status" : true}}, (err, data) =>{
+			this.db.collection("Game_Host").update({game_id : game_id}, { $set: {"game_status" : true, "score" : score}}, (err, data) =>{
 				if(err){reject(err);return;}
 				resolve(data)
 			})
 		})
 	}
+    async showHistory(username){
+        return new Promise((resolve, reject) => {
+            this.db.collection("Game_Host").find({username : username, game_status : true}, (err, data) => {
+                if(err){reject(err);return;}
+                resolve(data)
+            })
+        })
+    }
+    async getHighestScore(username){
+        return new Promise((resolve, reject) => {
+            this.db.collection("Game_Host").find({username : username}, {sort : {score: -1}, limit : 1}, function(err,data){
+                if(err){reject(err);return}
+                resolve(data)
+            })
+        })
+    }
+
+    async getLeaderBoard(){
+        return new Promise((resolve, reject) => {
+            this.db.collection("Game_Host").find({}, {sort : {score: -1}, limit : 10}, function(err,data){
+                if(err){reject(err);return}
+                resolve(data)
+            })
+        })
+    }
 }
 
 module.exports = mongoDB

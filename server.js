@@ -59,6 +59,34 @@ app.get('/play/:username', function(req,res){
 	})
 })
 
+app.get('/history/:username', function(req,res){
+	db.showHistory(req.params.username).then((data) => {
+		let promise = data.toArray()
+		promise.then(function(result){
+			res.send(result)
+		})
+		
+	})
+})
+
+app.get('/highestscore/:username', function (req,res){
+	db.getHighestScore(req.params.username).then((data) =>{
+		let promise = data.toArray()
+		promise.then(function(result){
+			res.send(result)
+		})
+	})
+})
+
+app.get('/leaderboard', function (req,res){
+	db.getLeaderBoard().then((data) => {
+		let promise = data.toArray()
+		promise.then((result) => {
+			res.send(result)
+		})
+	})
+})
+
 app.set('port', (process.env.PORT || 5000))
 
 // Process application/x-www-form-urlencoded

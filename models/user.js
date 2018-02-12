@@ -14,7 +14,7 @@ class User{
 		this.coord = data.game_data.action //store coordination of firing shot.
 		this.missed_shot = data.game_data.missed_shot
 		this.ship_destroyed = data.game_data.ship_destroyed
-		
+		this.score = data.game_data.score
 	}
 
 	async shoot(coord){
@@ -57,27 +57,40 @@ class User{
 					this.ship_destroyed += 1
 					msg = "You just sank the " + shipName[this.mapData[x][y]-1]
 					if(this.checkGameStatus()){
-						await db.updateGameStatus(this.game_id)
-						await db.updateHP(this.map_id,this.shipData)
-						await db.collectAction(this.game_id, this.coord, this.ship_destroyed, this.missed_shot )
+						let query = await db.updateHP(this.map_id,this.shipData).then(async() => {
+							await db.collectAction(this.game_id, this.coord,this.ship_destroyed, this.missed_shot).then(async() => {
+								await db.updateGameStatus(this.game_id, this.coord.length - this.missed_shot)
+							})
+						})
+						// await db.collectAction(this.game_id, this.coord, this.ship_destroyed, this.missed_shot )
+						// await db.updateGameStatus(this.game_id)
 						this.game_status = true
 						msg = "Win ! You completed the game in " + this.coord.length + " moves" + "\nMissed shots : " + this.missed_shot
 						return resolve({
 							msg : msg,
 							status : 201
-						})
+							})
+						
+						// this.game_status = true
+						// msg = "Win ! You completed the game in " + this.coord.length + " moves" + "\nMissed shots : " + this.missed_shot
+						// return resolve({
+						// 	msg : msg,
+						// 	status : 201
+						// })
 					}
 				}
-				await db.updateHP(this.map_id,this.shipData)
+				 // await db.updateHP(this.map_id,this.shipData)
 				//this.updateHP(this.map_id, this.mapData[x][y])
 			}else{ // Miss !
 				this.missed_shot += 1
 				this.coord.push(coord)
 				msg = "Missed!"
 			}
-			await db.collectAction(this.game_id, this.coord, this.ship_destroyed, this.missed_shot )
+			let query = await db.updateHP(this.map_id, this.shipData).then(async() =>{
+				await db.collectAction(this.game_id, this.coord, this.ship_destroyed, this.missed_shot )
 			resolve({msg : msg,
 					status : 200
+				})
 			})
 		})
 	}
