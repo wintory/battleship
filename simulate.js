@@ -1,15 +1,28 @@
 var request = require('request')
+var sleep = require('sleep')
+
+async function newgame(){
+	return new Promise(async function(resolve, reject){
+		request('http://localhost:5000/newgame/matus', function(err,res,body){
+			console.log("Start !")
+			if(res.statusCode == 200){
+				resolve(true)
+			}
+			
+		})
+	})
+}
 
 async function x(path) {
   return new Promise(async function(resolve, reject) {
-  	var result = false
     request(path, function(err,res,body) {
     	console.log(res.body)
+    	let result = res.statusCode
     	if(res.statusCode == 201){
-    		result = true
+    		result = false
     	}
+    	resolve(result)
     })
-    resolve(result)
   });
 }
 
@@ -18,13 +31,21 @@ async function simmulate(){
 		for(let k = 1; k< 11; k++){
 			let path = 'http://localhost:5000/shoot/'+i+','+k
 			let check = await x(path)
-			if(!check){
+			if(check){
 				continue
 			}else{
 				break
 			}
+			sleep.msleep(200)
 		}
+	}		
+}
+async function test(){
+	if(newgame()){
+		sleep.msleep(500)
+		simmulate()
 	}
 }
 
-simmulate()
+test()
+
