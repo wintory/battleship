@@ -19,6 +19,7 @@
 $ git clone https://github.com/numchiew/battleship.git
 $ cd battleship
 $ npm install
+$ mongo start
 $ node server.js
 ```
 
